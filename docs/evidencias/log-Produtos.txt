@@ -1,0 +1,6 @@
+Produtos em http://localhost:8081
+GET /x -> 404
+GET /produtos/1 -> 200
+Produtos em http://localhost:8081
+GET /x -> 404
+GET /produtos/1 -> 200

@@ -1,0 +1,22 @@
+# Arquivos compilados
+out/
+bin/
+target/
+*.class
+
+# IntelliJ (arquivos locais; .idea/*.xml compartilhados e .run ficam versionados)
+.idea/workspace.xml
+.idea/shelf/
+.idea/httpRequests/
+.idea/dataSources/
+.http-client/
+*.iws
+
+# Temporários / sistema
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+/.idea/
+/*.iml

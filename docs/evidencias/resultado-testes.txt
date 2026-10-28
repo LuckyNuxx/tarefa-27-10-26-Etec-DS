@@ -1,0 +1,263 @@
+
+==================== BLOCO A - fluxo principal e validações ====================
+
+### T01 - Criar pedido em Pedidos (pré-requisito) (esperado 201)
+$ curl -i -X POST http://localhost:8082/pedidos -H Content-Type: text/plain --data 1
+HTTP/1.1 201 Created
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 83
+Location: /pedidos/1
+
+{"id":1,"produto":{"id":1,"nome":"Caderno","precoCentavos":1500},"status":"CRIADO"}
+
+### T02 - Criar entrega para o pedido 1 (esperado 201)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 1
+HTTP/1.1 201 Created
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+Location: /entregas/1
+
+{"id":1,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+### T03 - Consultar a entrega 1 (esperado 200)
+$ curl -i http://localhost:8083/entregas/1
+HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+
+{"id":1,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+### T04 - Segunda entrega para o mesmo pedido (permitido) (esperado 201)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 1
+HTTP/1.1 201 Created
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+Location: /entregas/2
+
+{"id":2,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+### T05 - Consultar a entrega 2 (esperado 200)
+$ curl -i http://localhost:8083/entregas/2
+HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+
+{"id":2,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+### T06 - POST com texto 'abc' (esperado 400)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data abc
+HTTP/1.1 400 Bad Request
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 48
+
+{"erro":"Envie um ID inteiro positivo no corpo"}
+
+### T07 - POST com ID 0 (esperado 400)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 0
+HTTP/1.1 400 Bad Request
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 48
+
+{"erro":"Envie um ID inteiro positivo no corpo"}
+
+### T08 - POST com ID negativo (-5) (esperado 400)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data -5
+HTTP/1.1 400 Bad Request
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 48
+
+{"erro":"Envie um ID inteiro positivo no corpo"}
+
+### T09 - POST com corpo vazio (esperado 400)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 
+HTTP/1.1 400 Bad Request
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 48
+
+{"erro":"Envie um ID inteiro positivo no corpo"}
+
+### T10 - POST com pedido inexistente (999) (esperado 422)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 999
+HTTP/1.1 422 
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 38
+
+{"erro":"Pedido informado nao existe"}
+
+### T11 - GET de entrega inexistente (999) (esperado 404)
+$ curl -i http://localhost:8083/entregas/999
+HTTP/1.1 404 Not Found
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 30
+
+{"erro":"Entrega inexistente"}
+
+### T12 - GET com ID inválido (abc) (esperado 400)
+$ curl -i http://localhost:8083/entregas/abc
+HTTP/1.1 400 Bad Request
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 30
+
+{"erro":"ID deve ser inteiro"}
+
+### T13 - GET em /entregas (método incorreto) (esperado 405)
+$ curl -i http://localhost:8083/entregas
+HTTP/1.1 405 Method Not Allowed
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Allow: POST
+Content-type: application/json; charset=utf-8
+Content-length: 31
+
+{"erro":"Metodo nao permitido"}
+
+### T14 - POST em /entregas/1 (método incorreto) (esperado 405)
+$ curl -i -X POST http://localhost:8083/entregas/1 -H Content-Type: text/plain --data 1
+HTTP/1.1 405 Method Not Allowed
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Allow: GET
+Content-type: application/json; charset=utf-8
+Content-length: 31
+
+{"erro":"Metodo nao permitido"}
+
+### T15 - Rota desconhecida (esperado 404)
+$ curl -i http://localhost:8083/desconhecida
+HTTP/1.1 404 Not Found
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 27
+
+{"erro":"Rota inexistente"}
+
+### T16 - Corpo com mais de 64 bytes (esperado 413)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 11111111111111111111111111111111111111111111111111111111111111111111111111111111
+HTTP/1.1 413 Request Entity Too Large
+Date: Wed, 28 Oct 2026 00:56:42 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 29
+
+{"erro":"Corpo muito grande"}
+
+==================== BLOCO B - Produtos parado (falha parcial que NÃO afeta Entregas) ====================
+
+### T17 - Com Produtos parado: criar entrega p/ pedido existente (esperado 201)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 1
+HTTP/1.1 201 Created
+Date: Wed, 28 Oct 2026 00:56:43 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+Location: /entregas/3
+
+{"id":3,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+### T18 - Com Produtos parado: consultar a entrega criada (esperado 200)
+$ curl -i http://localhost:8083/entregas/3
+HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 00:56:43 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+
+{"id":3,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+==================== BLOCO C - Pedidos parado (503 na criação, GET local continua) ====================
+
+### T19 - Com Pedidos parado: criar entrega (esperado 503)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 1
+HTTP/1.1 503 Service Unavailable
+Date: Wed, 28 Oct 2026 00:56:44 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 31
+
+{"erro":"Pedidos indisponivel"}
+
+### T20 - Com Pedidos parado: consultar entrega já criada (1) (esperado 200)
+$ curl -i http://localhost:8083/entregas/1
+HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 00:56:44 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+
+{"id":1,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+### T21 - Com Pedidos parado: consultar entrega já criada (3) (esperado 200)
+$ curl -i http://localhost:8083/entregas/3
+HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 00:56:44 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+
+{"id":3,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+==================== BLOCO D - Pedidos volta: o 503 não gravou nada nem consumiu ID ====================
+
+### T22 - Recriar pedido (memória de Pedidos foi zerada) (esperado 201)
+$ curl -i -X POST http://localhost:8082/pedidos -H Content-Type: text/plain --data 1
+HTTP/1.1 201 Created
+Date: Wed, 28 Oct 2026 00:56:47 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 83
+Location: /pedidos/1
+
+{"id":1,"produto":{"id":1,"nome":"Caderno","precoCentavos":1500},"status":"CRIADO"}
+
+### T23 - Criar entrega: ID deve ser 4 (sem buraco pelo 503) (esperado 201)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 1
+HTTP/1.1 201 Created
+Date: Wed, 28 Oct 2026 00:56:47 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 49
+Location: /entregas/4
+
+{"id":4,"pedidoId":1,"status":"AGUARDANDO_ENVIO"}
+
+==================== BLOCO E - Pedidos responde status inesperado (servidor falso na 9999 devolvendo 500) ====================
+
+### T24 - Pedidos devolve 500 -> Entregas responde 503 (esperado 503)
+$ curl -i -X POST http://localhost:8083/entregas -H Content-Type: text/plain --data 1
+HTTP/1.1 503 Service Unavailable
+Date: Wed, 28 Oct 2026 00:56:51 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 31
+
+{"erro":"Pedidos indisponivel"}
+
+### T25 - Nada foi gravado: entrega 1 não existe (esperado 404)
+$ curl -i http://localhost:8083/entregas/1
+HTTP/1.1 404 Not Found
+Date: Wed, 28 Oct 2026 00:56:51 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 30
+
+{"erro":"Entrega inexistente"}
+
+==================== BLOCO F - Reiniciar Entregas: perda dos dados em memória ====================
+
+### T26 - Entrega 1 criada antes do reinício (esperado 404)
+$ curl -i http://localhost:8083/entregas/1
+HTTP/1.1 404 Not Found
+Date: Wed, 28 Oct 2026 00:56:54 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 30
+
+{"erro":"Entrega inexistente"}
+
+### T27 - Entrega 4 criada antes do reinício (esperado 404)
+$ curl -i http://localhost:8083/entregas/4
+HTTP/1.1 404 Not Found
+Date: Wed, 28 Oct 2026 00:56:54 GMT
+Content-type: application/json; charset=utf-8
+Content-length: 30
+
+{"erro":"Entrega inexistente"}

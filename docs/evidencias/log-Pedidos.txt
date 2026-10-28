@@ -1,0 +1,11 @@
+Pedidos em http://localhost:8082
+GET /x -> 404
+POST /pedidos -> 201
+GET /pedidos/1 -> 200
+GET /pedidos/1 -> 200
+GET /pedidos/999 -> 404
+GET /pedidos/1 -> 200
+Pedidos em http://localhost:8082
+GET /x -> 404
+POST /pedidos -> 201
+GET /pedidos/1 -> 200

@@ -1,0 +1,28 @@
+T01   | Criar pedido em Pedidos (pré-requisito)                       | esperado 201 | obtido 201          | OK
+T02   | Criar entrega para o pedido 1                                  | esperado 201 | obtido 201          | OK
+T03   | Consultar a entrega 1                                          | esperado 200 | obtido 200          | OK
+T04   | Segunda entrega para o mesmo pedido (permitido)                | esperado 201 | obtido 201          | OK
+T05   | Consultar a entrega 2                                          | esperado 200 | obtido 200          | OK
+T06   | POST com texto 'abc'                                           | esperado 400 | obtido 400          | OK
+T07   | POST com ID 0                                                  | esperado 400 | obtido 400          | OK
+T08   | POST com ID negativo (-5)                                      | esperado 400 | obtido 400          | OK
+T09   | POST com corpo vazio                                           | esperado 400 | obtido 400          | OK
+T10   | POST com pedido inexistente (999)                              | esperado 422 | obtido 422          | OK
+T11   | GET de entrega inexistente (999)                               | esperado 404 | obtido 404          | OK
+T12   | GET com ID inválido (abc)                                     | esperado 400 | obtido 400          | OK
+T13   | GET em /entregas (método incorreto)                           | esperado 405 | obtido 405          | OK
+T14   | POST em /entregas/1 (método incorreto)                        | esperado 405 | obtido 405          | OK
+T15   | Rota desconhecida                                              | esperado 404 | obtido 404          | OK
+T16   | Corpo com mais de 64 bytes                                     | esperado 413 | obtido 413          | OK
+T17   | Com Produtos parado: criar entrega p/ pedido existente         | esperado 201 | obtido 201          | OK
+T18   | Com Produtos parado: consultar a entrega criada                | esperado 200 | obtido 200          | OK
+T19   | Com Pedidos parado: criar entrega                              | esperado 503 | obtido 503          | OK
+T20   | Com Pedidos parado: consultar entrega já criada (1)           | esperado 200 | obtido 200          | OK
+T21   | Com Pedidos parado: consultar entrega já criada (3)           | esperado 200 | obtido 200          | OK
+T22   | Recriar pedido (memória de Pedidos foi zerada)                | esperado 201 | obtido 201          | OK
+T23   | Criar entrega: ID deve ser 4 (sem buraco pelo 503)             | esperado 201 | obtido 201          | OK
+      (confirmado: id 4, nenhuma entrega gravada durante o 503)
+T24   | Pedidos devolve 500 -> Entregas responde 503                   | esperado 503 | obtido 503          | OK
+T25   | Nada foi gravado: entrega 1 não existe                        | esperado 404 | obtido 404          | OK
+T26   | Entrega 1 criada antes do reinício                            | esperado 404 | obtido 404          | OK
+T27   | Entrega 4 criada antes do reinício                            | esperado 404 | obtido 404          | OK

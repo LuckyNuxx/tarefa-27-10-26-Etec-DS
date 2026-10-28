@@ -1,0 +1,10 @@
+flowchart TB
+    C["Cliente<br/>(testes.http no IntelliJ ou curl)"]
+    E["<b>Entregas</b> - porta 8083<br/>guarda: entregas (memória)"]
+    P["<b>Pedidos</b> - porta 8082<br/>guarda: pedidos (memória)"]
+    R["<b>Produtos</b> - porta 8081<br/>guarda: catálogo fixo"]
+    C -- "POST /entregas<br/>GET /entregas/id" --> E
+    C -. "POST /pedidos<br/>GET /pedidos/id" .-> P
+    C -. "GET /produtos/id" .-> R
+    E -- "HTTP GET /pedidos/id<br/>(só ao criar entrega)" --> P
+    P -- "HTTP GET /produtos/id<br/>(só ao criar pedido)" --> R

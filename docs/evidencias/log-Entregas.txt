@@ -1,0 +1,31 @@
+Entregas em http://localhost:8083
+GET /x -> 404
+POST /entregas -> 201
+GET /entregas/1 -> 200
+POST /entregas -> 201
+GET /entregas/2 -> 200
+POST /entregas -> 400
+POST /entregas -> 400
+POST /entregas -> 400
+POST /entregas -> 400
+POST /entregas -> 422
+GET /entregas/999 -> 404
+GET /entregas/abc -> 400
+GET /entregas -> 405
+POST /entregas/1 -> 405
+GET /desconhecida -> 404
+POST /entregas -> 413
+POST /entregas -> 201
+GET /entregas/3 -> 200
+POST /entregas -> 503
+GET /entregas/1 -> 200
+GET /entregas/3 -> 200
+POST /entregas -> 201
+Entregas em http://localhost:8083
+GET /x -> 404
+POST /entregas -> 503
+GET /entregas/1 -> 404
+Entregas em http://localhost:8083
+GET /x -> 404
+GET /entregas/1 -> 404
+GET /entregas/4 -> 404
