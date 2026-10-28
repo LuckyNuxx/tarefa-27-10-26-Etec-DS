@@ -1,0 +1,95 @@
+### Requisições de teste do serviço de Entregas (porta 8083)
+### Ordem sugerida: 1, 2, 3 ... Os números NÃO são IDs da API.
+### Antes: Produtos (8081), Pedidos (8082) e Entregas (8083) precisam estar rodando.
+### Não execute tudo de uma vez: os testes 20, 21 e 25 dependem de parar serviços manualmente.
+
+### 1 Criar pedido em Pedidos (pré-requisito) - esperado 201
+POST http://localhost:8082/pedidos
+Content-Type: text/plain
+
+1
+
+### 2 Criar entrega para o pedido 1 - esperado 201 + Location: /entregas/1
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+1
+
+### 3 Consultar a entrega criada (ajuste o ID se necessário) - esperado 200
+GET http://localhost:8083/entregas/1
+
+### 4 Segunda entrega para o mesmo pedido (permitido na versão básica) - esperado 201
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+1
+
+### 5 Entrada inválida (texto) - esperado 400
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+abc
+
+### 6 ID zero - esperado 400
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+0
+
+### 7 ID negativo - esperado 400
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+-5
+
+### 8 Corpo vazio - esperado 400
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+### 9 Pedido inexistente - esperado 422 (nada é gravado)
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+999
+
+### 10 Entrega inexistente - esperado 404
+GET http://localhost:8083/entregas/999
+
+### 11 ID inválido na consulta - esperado 400
+GET http://localhost:8083/entregas/abc
+
+### 12 Método incorreto em /entregas - esperado 405 com Allow: POST
+GET http://localhost:8083/entregas
+
+### 13 Método incorreto em /entregas/{id} - esperado 405 com Allow: GET
+POST http://localhost:8083/entregas/1
+Content-Type: text/plain
+
+1
+
+### 14 Rota desconhecida - esperado 404
+GET http://localhost:8083/desconhecida
+
+### 15 Corpo maior que 64 bytes - esperado 413
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+1111111111111111111111111111111111111111111111111111111111111111111111111111111111
+
+### 20 Executar SOMENTE depois de parar Produtos: entrega ainda deve ser criada - esperado 201
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+1
+
+### 21 Executar SOMENTE depois de parar Pedidos - esperado 503
+POST http://localhost:8083/entregas
+Content-Type: text/plain
+
+1
+
+### 22 Com Pedidos parado, entrega já criada ainda responde - esperado 200
+GET http://localhost:8083/entregas/1
+
+### 25 Executar SOMENTE depois de reiniciar Entregas: registros em memória perdidos - esperado 404
+GET http://localhost:8083/entregas/1
