@@ -1,0 +1,56 @@
+### 1 Consultar produto existente - esperado 200
+GET http://localhost:8081/produtos/1
+
+### 2 Consultar outro produto - esperado 200
+GET http://localhost:8081/produtos/2
+
+### 3 Produto inexistente - esperado 404
+GET http://localhost:8081/produtos/99
+
+### 4 ID invalido - esperado 400
+GET http://localhost:8081/produtos/abc
+
+### 5 Criar pedido - esperado 201
+POST http://localhost:8082/pedidos
+Content-Type: text/plain
+
+1
+
+### 6 Consultar pedido - ajustar ID se necessario - esperado 200
+GET http://localhost:8082/pedidos/1
+
+### 7 Referencia a produto inexistente - esperado 422
+POST http://localhost:8082/pedidos
+Content-Type: text/plain
+
+99
+
+### 8 Entrada invalida - esperado 400
+POST http://localhost:8082/pedidos
+Content-Type: text/plain
+
+abc
+
+### 9 ID nao positivo - esperado 400
+POST http://localhost:8082/pedidos
+Content-Type: text/plain
+
+0
+
+### 10 Metodo nao permitido - esperado 405
+GET http://localhost:8082/pedidos
+
+### 11 Pedido inexistente - esperado 404
+GET http://localhost:8082/pedidos/999
+
+### 12 Rota desconhecida - esperado 404
+GET http://localhost:8082/desconhecida
+
+### 13 Executar SOMENTE depois de parar Produtos - esperado 503
+POST http://localhost:8082/pedidos
+Content-Type: text/plain
+
+1
+
+### 14 Com Produtos parado, pedido salvo ainda responde 200
+GET http://localhost:8082/pedidos/1
